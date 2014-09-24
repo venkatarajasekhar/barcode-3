@@ -1,6 +1,6 @@
 # Barcodes
 
-Displays barcodes on the pebble. For now this only supports [Code 39](https://en.wikipedia.org/wiki/Code_39).
+Displays barcodes on the Pebble watch. For now this only supports [Code 39](https://en.wikipedia.org/wiki/Code_39).
 
 # Todo
 
