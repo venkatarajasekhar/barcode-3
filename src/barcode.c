@@ -81,6 +81,18 @@ char* drawChar(char *buf, bar *c) {
 	return buf;
 }
 
+char* drawCode(char *word) {
+	char *buf = (char*)bmp->addr;
+	memset(bmp->addr, 0xFF, bmp->bounds.size.h * bmp->row_size_bytes);
+	buf = drawChar(buf, charLookup['*']);
+	while (*word != '\0') {
+		buf = drawChar(buf, charLookup[(int)*word]);
+		word++;
+	}
+	buf = drawChar(buf, charLookup['*']);
+	return buf;
+}
+
 int margin = 10;
 
 void window_load(Window *window) {
@@ -95,14 +107,9 @@ void window_load(Window *window) {
 	// Width in bytes, aligned to multiples of 4.
 	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
 	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
-	memset(bmp->addr, 0xFF, bounds.size.h * bmp->row_size_bytes);
 	
-	char *buf = (char*)bmp->addr;
-
-	buf = drawChar(buf, charLookup['*']);
-	buf = drawChar(buf, charLookup['A']);
-	buf = drawChar(buf, charLookup['*']);
-
+	drawCode("TEST");
+	
 	bitmap_layer_set_bitmap(barcodeLayer, bmp);
 	layer_add_child(windowLayer, bitmap_layer_get_layer(barcodeLayer));
 }
