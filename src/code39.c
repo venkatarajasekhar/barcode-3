@@ -2,73 +2,71 @@
 
 #include "barcode.h"
 
-typedef enum {w, W, b, B} bar;
-
-bar* charLookup[] = {
-	['0'] = (bar[]){b,w,b,W,B,w,B,w,b},
-	['1'] = (bar[]){B,w,b,W,b,w,b,w,B},
-	['2'] = (bar[]){b,w,B,W,b,w,b,w,B},
-	['3'] = (bar[]){B,w,B,W,b,w,b,w,b},
-	['4'] = (bar[]){b,w,b,W,B,w,b,w,B},
-	['5'] = (bar[]){B,w,b,W,B,w,b,w,b},
-	['6'] = (bar[]){b,w,B,W,B,w,b,w,b},
-	['7'] = (bar[]){b,w,b,W,b,w,B,w,B},
-	['8'] = (bar[]){B,w,b,W,b,w,B,w,b},
-	['9'] = (bar[]){b,w,B,W,b,w,B,w,b},
-	['A'] = (bar[]){B,w,b,w,b,W,b,w,B},
-	['B'] = (bar[]){b,w,B,w,b,W,b,w,B},
-	['C'] = (bar[]){B,w,B,w,b,W,b,w,b},
-	['D'] = (bar[]){b,w,b,w,B,W,b,w,B},
-	['E'] = (bar[]){B,w,b,w,B,W,b,w,b},
-	['F'] = (bar[]){b,w,B,w,B,W,b,w,b},
-	['G'] = (bar[]){b,w,b,w,b,W,B,w,B},
-	['H'] = (bar[]){B,w,b,w,b,W,B,w,b},
-	['I'] = (bar[]){b,w,B,w,b,W,B,w,b},
-	['J'] = (bar[]){b,w,b,w,B,W,B,w,b},
-	['K'] = (bar[]){B,w,b,w,b,w,b,W,B},
-	['L'] = (bar[]){b,w,B,w,b,w,b,W,B},
-	['M'] = (bar[]){B,w,B,w,b,w,b,W,b},
-	['N'] = (bar[]){b,w,b,w,B,w,b,W,B},
-	['O'] = (bar[]){B,w,b,w,B,w,b,W,b},
-	['P'] = (bar[]){b,w,B,w,B,w,b,W,b},
-	['Q'] = (bar[]){b,w,b,w,b,w,B,W,B},
-	['R'] = (bar[]){B,w,b,w,b,w,B,W,b},
-	['S'] = (bar[]){b,w,B,w,b,w,B,W,b},
-	['T'] = (bar[]){b,w,b,w,B,w,B,W,b},
-	['U'] = (bar[]){B,W,b,w,b,w,b,w,B},
-	['V'] = (bar[]){b,W,B,w,b,w,b,w,B},
-	['W'] = (bar[]){B,W,B,w,b,w,b,w,b},
-	['X'] = (bar[]){b,W,b,w,B,w,b,w,B},
-	['Y'] = (bar[]){B,W,b,w,B,w,b,w,b},
-	['Z'] = (bar[]){b,W,B,w,B,w,b,w,b},
-	['-'] = (bar[]){b,W,b,w,b,w,B,w,B},
-	['.'] = (bar[]){B,W,b,w,b,w,B,w,b},
-	['s'] = (bar[]){b,W,B,w,b,w,B,w,b},
-	['$'] = (bar[]){b,W,b,W,b,W,b,w,b},
-	['/'] = (bar[]){b,W,b,W,b,w,b,W,b},
-	['+'] = (bar[]){b,W,b,w,b,W,b,W,b},
-	['%'] = (bar[]){b,w,b,W,b,W,b,W,b},
-	['*'] = (bar[]){b,W,b,w,B,w,B,w,b}
+static char* charLookup[] = {
+	['0'] = "bwbWBwBwb",
+	['1'] = "BwbWbwbwB",
+	['2'] = "bwBWbwbwB",
+	['3'] = "BwBWbwbwb",
+	['4'] = "bwbWBwbwB",
+	['5'] = "BwbWBwbwb",
+	['6'] = "bwBWBwbwb",
+	['7'] = "bwbWbwBwB",
+	['8'] = "BwbWbwBwb",
+	['9'] = "bwBWbwBwb",
+	['A'] = "BwbwbWbwB",
+	['B'] = "bwBwbWbwB",
+	['C'] = "BwBwbWbwb",
+	['D'] = "bwbwBWbwB",
+	['E'] = "BwbwBWbwb",
+	['F'] = "bwBwBWbwb",
+	['G'] = "bwbwbWBwB",
+	['H'] = "BwbwbWBwb",
+	['I'] = "bwBwbWBwb",
+	['J'] = "bwbwBWBwb",
+	['K'] = "BwbwbwbWB",
+	['L'] = "bwBwbwbWB",
+	['M'] = "BwBwbwbWb",
+	['N'] = "bwbwBwbWB",
+	['O'] = "BwbwBwbWb",
+	['P'] = "bwBwBwbWb",
+	['Q'] = "bwbwbwBWB",
+	['R'] = "BwbwbwBWb",
+	['S'] = "bwBwbwBWb",
+	['T'] = "bwbwBwBWb",
+	['U'] = "BWbwbwbwB",
+	['V'] = "bWBwbwbwB",
+	['W'] = "BWBwbwbwb",
+	['X'] = "bWbwBwbwB",
+	['Y'] = "BWbwBwbwb",
+	['Z'] = "bWBwBwbwb",
+	['-'] = "bWbwbwBwB",
+	['.'] = "BWbwbwBwb",
+	['s'] = "bWBwbwBwb",
+	['$'] = "bWbWbWbwb",
+	['/'] = "bWbWbwbWb",
+	['+'] = "bWbwbWbWb",
+	['%'] = "bwbWbWbWb",
+	['*'] = "bWbwBwBwb",
 };
 
-char* drawBar(char *buf, char val) {
+static char* drawBar(char *buf, char val) {
 	for (int i = 0; i < bmp->row_size_bytes; i++) {
 		buf[i] = val;
 	}
 	return buf + bmp->row_size_bytes;
 }
 
-char* drawChar(char *buf, bar *c) {
+static char* drawChar(char *buf, char *c) {
 	for (int i = 0; i < 9; i++) {
 		switch (c[i]) {
-		case W:
+		case 'W':
 			buf = drawBar(buf, 0xFF);
-		case w:
+		case 'w':
 			buf = drawBar(buf, 0xFF);
 			break;
-		case B:
+		case 'B':
 			buf = drawBar(buf, 0x00);
-		case b:
+		case 'b':
 			buf = drawBar(buf, 0x00);
 			break;
 		}
@@ -78,7 +76,7 @@ char* drawChar(char *buf, bar *c) {
 	return buf;
 }
 
-int charWidth = 13; // Each char is 13px wide. 6 narrow, 3 wide, 1 delimeter.
+static int charWidth = 13; // Each char is 13px wide. 6 narrow, 3 wide, 1 delimeter.
 
 int drawCode39(char *word) {
 	// TODO check the size of the word against the max width for the bitmap.

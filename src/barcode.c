@@ -6,26 +6,35 @@ Window *window;
 BitmapLayer *barcode;
 TextLayer *label;
 
-// Lazy.
 int currentBarcode = 0;
 int nBarcodes = 2;
-char* labels[] = {
-	"The Castle",
-	"Test",
-};
-char *barcodes[] = {
-	"00000",
-	"TESTING1",
+typedef struct Barcode {
+	char* label;
+	char* code;
+	Symbology sym;
+} Barcode;
+
+// Lazy.
+Barcode barcodes[] = {
+	{"The Castle", "0000", CODE39},
+	{"Test", "TEST12", CODE128},
 };
 
 void display() {
-	bmp->bounds.size.h = drawCode39(barcodes[currentBarcode]);
+	switch (barcodes[currentBarcode].sym) {
+	case CODE39:
+		bmp->bounds.size.h = drawCode39(barcodes[currentBarcode].code);
+		break;
+	case CODE128:
+		bmp->bounds.size.h = drawCode128(barcodes[currentBarcode].code);
+		break;
+	}
 	bitmap_layer_set_bitmap(barcode, bmp);
 	
-	text_layer_set_text(label, labels[currentBarcode]);
+	text_layer_set_text(label, barcodes[currentBarcode].label);
 }
 
-int margin = 3;
+int margin = 4;
 
 void window_load(Window *window) {
 	Layer *windowLayer = window_get_root_layer(window);
