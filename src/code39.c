@@ -81,6 +81,7 @@ char* drawChar(char *buf, bar *c) {
 int charWidth = 13; // Each char is 13px wide. 6 narrow, 3 wide, 1 delimeter.
 
 int drawCode39(char *word) {
+	// TODO check the size of the word against the max width for the bitmap.
 	int count = 0;
 	char *buf = (char*)bmp->addr;
 	memset(bmp->addr, 0xFF, bmp->bounds.size.h * bmp->row_size_bytes);
