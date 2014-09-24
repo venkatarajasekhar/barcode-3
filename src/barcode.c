@@ -2,7 +2,8 @@
 
 Window *window;
 
-BitmapLayer *barcodeLayer;
+BitmapLayer *barcode;
+TextLayer *label;
 GBitmap *bmp;
 
 typedef enum {w, W, b, B} bar;
@@ -81,26 +82,51 @@ char* drawChar(char *buf, bar *c) {
 	return buf;
 }
 
-char* drawCode(char *word) {
+int charWidth = 13; // Each char is 13px wide. 6 narrow, 3 wide, 1 delimeter.
+int margin = 3;
+
+int drawCode(char *word) {
+	int count = 0;
 	char *buf = (char*)bmp->addr;
 	memset(bmp->addr, 0xFF, bmp->bounds.size.h * bmp->row_size_bytes);
 	buf = drawChar(buf, charLookup['*']);
 	while (*word != '\0') {
 		buf = drawChar(buf, charLookup[(int)*word]);
 		word++;
+		count++;
 	}
 	buf = drawChar(buf, charLookup['*']);
-	return buf;
+	return (count+2)*charWidth;
 }
 
-int margin = 10;
+// Lazy.
+int currentBarcode = 0;
+int nBarcodes = 2;
+char* labels[] = {
+	"The Castle",
+	"Test",
+};
+char *barcodes[] = {
+	"0000000",
+	"TESTING1",
+};
+
+void display() {
+	bmp->bounds.size.h = drawCode(barcodes[currentBarcode]);
+	bitmap_layer_set_bitmap(barcode, bmp);
+	
+	text_layer_set_text(label, labels[currentBarcode]);
+}
 
 void window_load(Window *window) {
 	Layer *windowLayer = window_get_root_layer(window);
 	GRect bounds = layer_get_bounds(windowLayer);
 	bounds.origin.y += margin;
 	bounds.size.h -= 2 * margin;
-	barcodeLayer = bitmap_layer_create(bounds);
+	barcode = bitmap_layer_create(bounds);
+	
+	bitmap_layer_set_alignment(barcode, GAlignCenter);
+	layer_add_child(windowLayer, bitmap_layer_get_layer(barcode));
 
 	bmp = gbitmap_create_blank(bounds.size);
 	
@@ -108,14 +134,35 @@ void window_load(Window *window) {
 	bmp->row_size_bytes = (bounds.size.w/8+3) & ~3;
 	bmp->addr = malloc(bounds.size.h * bmp->row_size_bytes);
 	
-	drawCode("TEST");
+	label = text_layer_create((GRect) { .origin = { 0, 0 }, .size = { bounds.size.w, 16 } });
+	text_layer_set_text(label, "Barcodes!");
+	text_layer_set_text_alignment(label, GTextAlignmentCenter);
+	layer_add_child(windowLayer, text_layer_get_layer(label));
 	
-	bitmap_layer_set_bitmap(barcodeLayer, bmp);
-	layer_add_child(windowLayer, bitmap_layer_get_layer(barcodeLayer));
+	display();
+}
+
+static void up_click_handler(ClickRecognizerRef recognizer, void *context) {
+	currentBarcode = (currentBarcode+1) % nBarcodes;
+	display();
+}
+
+static void down_click_handler(ClickRecognizerRef recognizer, void *context) {
+	currentBarcode--;
+	if (currentBarcode < 0) {
+		currentBarcode = nBarcodes-1;
+	}
+	display();
+}
+
+static void click_config_provider(void *context) {
+	window_single_click_subscribe(BUTTON_ID_UP, up_click_handler);
+	window_single_click_subscribe(BUTTON_ID_DOWN, down_click_handler);
 }
 
 int main(void) {
 	window = window_create();
+	window_set_click_config_provider(window, click_config_provider);
 	window_set_window_handlers(window, (WindowHandlers) {
 		.load = window_load,
 	});
