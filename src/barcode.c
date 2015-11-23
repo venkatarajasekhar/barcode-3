@@ -14,11 +14,7 @@ typedef struct Barcode {
 	Symbology sym;
 } Barcode;
 
-// Lazy.
-Barcode barcodes[] = {
-	{"The Castle", "0000", CODE39},
-	{"Test", "TEST12", CODE128},
-};
+extern Barcode barcodes[];
 
 void display() {
 	switch (barcodes[currentBarcode].sym) {
